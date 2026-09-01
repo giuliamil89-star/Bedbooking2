@@ -36,7 +36,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`BedBooking2 API in ascolto su http://localhost:${PORT}`);
+  console.log(`CheckOra API in ascolto su http://localhost:${PORT}`);
 });
 
 // Sincronizza automaticamente tutti i feed iCal ogni 30 minuti, così gli

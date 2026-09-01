@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'BedBooking2 - Prenotazioni',
-        short_name: 'BedBooking2',
+        name: 'CheckOra - Prenotazioni e arrivi',
+        short_name: 'CheckOra',
         description: 'Gestione prenotazioni e orari di arrivo per Airbnb e Booking.com',
         lang: 'it',
         theme_color: '#2563eb',

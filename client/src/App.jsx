@@ -10,7 +10,7 @@ export default function App() {
     <PropertiesProvider>
       <div className="app-shell">
         <header className="app-header">
-          <div className="app-brand">🏠 BedBooking2</div>
+          <div className="app-brand">🕒 CheckOra</div>
           <nav className="app-nav">
             <NavLink to="/" end>Arrivi</NavLink>
             <NavLink to="/calendario">Calendario</NavLink>

@@ -1,10 +1,27 @@
-# BedBooking2
+# CheckOra
 
 App per la gestione delle prenotazioni e degli orari di arrivo dei tuoi
 alloggi in affitto, con **sincronizzazione automatica da Airbnb e
 Booking.com** tramite calendario iCal e possibilità di aggiungere/modificare
 prenotazioni a mano (utile soprattutto per inserire l'orario di arrivo, che
 i calendari iCal di solito non forniscono).
+
+## Posizionamento come prodotto
+
+L'obiettivo è offrirla in abbonamento ad altri host, non solo uso personale.
+
+- **Target**: micro-host italiani con 1-3 strutture, che trovano gli altri
+  channel manager (Smoobu, iGMS) troppo cari o complessi, o Beds24 troppo
+  tecnico/in inglese.
+- **Differenziazione**: tutto in italiano, semplicissima, focus specifico
+  sul non perdere un arrivo — non è un channel manager completo (oggi non
+  fa sync bidirezionale, quindi non blocca automaticamente le date sulle
+  altre piattaforme), ma un cruscotto di consolidamento + gestione arrivi.
+- **Prezzo**: gratis fino a 1 struttura, poi 9€/mese fino a 3 strutture.
+- **Stato**: oggi è single-tenant (un solo utente/database). Per venderla
+  ad altri host serve ancora: autenticazione multi-utente con isolamento
+  dati, pagamenti ricorrenti (Stripe), pagina di presentazione e pagine
+  legali (termini, privacy GDPR). Vedi la roadmap in fondo al file.
 
 ## Funzionalità
 
@@ -102,19 +119,20 @@ comando da terminale):
    andrebbero perse ad ogni riavvio del servizio — sconsigliato per dati
    reali come le prenotazioni degli ospiti.
 4. Al termine del deploy, Render fornisce un URL pubblico HTTPS del tipo
-   `https://bedbooking2.onrender.com` — è il link della tua app, apribile
-   da qualsiasi dispositivo.
+   `https://checkora.onrender.com` — è il link della tua app, apribile
+   da qualsiasi dispositivo (o il tuo dominio, es. checkora.it, collegato
+   dopo).
 
 Alternative equivalenti (stesso `Dockerfile`, adattando il deploy alla
 piattaforma): [Railway](https://railway.app), [Fly.io](https://fly.io).
 
 ### 2. Installa l'app sul telefono Android
 
-1. Apri l'URL pubblico (es. `https://bedbooking2.onrender.com`) con
+1. Apri l'URL pubblico (es. `https://checkora.onrender.com`) con
    **Chrome** su Android.
 2. Chrome mostra in automatico il banner **"Installa app"** (o **"Aggiungi
    a schermata Home"** nel menu ⋮ in alto a destra se non compare da solo).
-3. Conferma: l'icona di BedBooking2 compare sulla schermata Home e si apre
+3. Conferma: l'icona di CheckOra compare sulla schermata Home e si apre
    a schermo intero, come un'app nativa — senza barra degli indirizzi.
 
 Da quel momento l'app sul telefono parla con lo stesso backend online: le
@@ -144,3 +162,15 @@ percorso del database, se necessario.
   Render/Railway/Fly.io) e funziona solo online: la schermata dell'app si
   carica anche con connessione debole, ma prenotazioni e sincronizzazione
   richiedono comunque una connessione al backend.
+
+## Roadmap verso un prodotto vendibile
+
+1. **Autenticazione multi-utente** — login/registrazione, isolamento dati
+   per host (oggi il database non distingue "di chi" sono le strutture).
+2. **Piani e pagamenti** — integrazione Stripe Billing per il piano a
+   pagamento (9€/mese oltre 1 struttura), gestione upgrade/downgrade.
+3. **Pagina di presentazione** — landing con proposta di valore, prezzi,
+   e pagine legali (termini di servizio, privacy policy GDPR — i nomi
+   degli ospiti sono dati personali).
+4. **Onboarding guidato** — istruzioni passo-passo per trovare il link
+   iCal su Airbnb/Booking.com direttamente nel prodotto.

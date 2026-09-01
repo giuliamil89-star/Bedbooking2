@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: bedbooking2
+    name: checkora
     runtime: docker
     plan: starter
     dockerfilePath: ./Dockerfile
@@ -9,6 +9,6 @@ services:
       - key: PORT
         value: 4000
     disk:
-      name: bedbooking2-data
+      name: checkora-data
       mountPath: /app/server/data
       sizeGB: 1

@@ -1,7 +1,7 @@
 {
-  "name": "bedbooking2-server",
+  "name": "checkora-server",
   "version": "1.0.0",
-  "description": "Backend API per BedBooking2 - gestione prenotazioni Airbnb/Booking.com",
+  "description": "Backend API per CheckOra - gestione prenotazioni e orari di arrivo Airbnb/Booking.com",
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {
