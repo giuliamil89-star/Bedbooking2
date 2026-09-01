@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   departure_time TEXT,
   notes TEXT,
   status TEXT NOT NULL CHECK (status IN ('confirmed', 'cancelled')) DEFAULT 'confirmed',
+  payment_status TEXT NOT NULL CHECK (payment_status IN ('paid', 'unpaid')) DEFAULT 'unpaid',
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -55,5 +56,14 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_bookings_feed_uid
 CREATE INDEX IF NOT EXISTS idx_bookings_property ON bookings(property_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_dates ON bookings(check_in, check_out);
 `);
+
+// Migrazione per i database creati prima dell'introduzione dello stato di
+// pagamento: aggiunge la colonna se manca, senza toccare i dati esistenti.
+const bookingColumns = db.prepare("PRAGMA table_info(bookings)").all();
+if (!bookingColumns.some((c) => c.name === 'payment_status')) {
+  db.exec(
+    "ALTER TABLE bookings ADD COLUMN payment_status TEXT NOT NULL DEFAULT 'unpaid' CHECK (payment_status IN ('paid', 'unpaid'))"
+  );
+}
 
 module.exports = db;

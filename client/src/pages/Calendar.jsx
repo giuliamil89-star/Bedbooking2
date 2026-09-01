@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '../api';
 import { useProperties } from '../context/PropertiesContext';
 import PlatformBadge from '../components/PlatformBadge';
+import PaymentBadge from '../components/PaymentBadge';
 import BookingFormModal from '../components/BookingFormModal';
 import { toLocalDateStr, todayStr } from '../utils';
 
@@ -80,6 +81,16 @@ export default function Calendar() {
     await load();
   }
 
+  async function handleTogglePayment(booking) {
+    try {
+      const next = booking.payment_status === 'paid' ? 'unpaid' : 'paid';
+      await api.updateBooking(booking.id, { payment_status: next });
+      await load();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   const today = todayStr();
 
   return (
@@ -156,6 +167,7 @@ export default function Calendar() {
               {(bookingsByDay[selectedDay] || []).map((b) => (
                 <li key={b.id}>
                   <PlatformBadge platform={b.platform} />{' '}
+                  <PaymentBadge status={b.payment_status} onToggle={() => handleTogglePayment(b)} />{' '}
                   <strong>{b.guest_name || 'Ospite'}</strong> — {b.property_name}
                   {b.isArrival && b.arrival_time ? ` (arrivo ore ${b.arrival_time})` : ''}
                   <button className="btn-link" onClick={() => { setEditing(b); setShowForm(true); }}>Modifica</button>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api';
 import PlatformBadge from '../components/PlatformBadge';
+import PaymentBadge from '../components/PaymentBadge';
 import { formatDateLong, isToday } from '../utils';
 
 export default function Dashboard() {
@@ -9,6 +10,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [syncing, setSyncing] = useState(false);
   const [savingId, setSavingId] = useState(null);
+  const [togglingId, setTogglingId] = useState(null);
 
   async function load() {
     setLoading(true);
@@ -51,6 +53,19 @@ export default function Dashboard() {
     }
   }
 
+  async function handleTogglePayment(booking) {
+    setTogglingId(booking.id);
+    try {
+      const next = booking.payment_status === 'paid' ? 'unpaid' : 'paid';
+      await api.updateBooking(booking.id, { payment_status: next });
+      setArrivals((list) => list.map((b) => (b.id === booking.id ? { ...b, payment_status: next } : b)));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setTogglingId(null);
+    }
+  }
+
   const todays = arrivals.filter((b) => isToday(b.check_in));
   const tomorrows = arrivals.filter((b) => !isToday(b.check_in));
 
@@ -73,12 +88,16 @@ export default function Dashboard() {
             bookings={todays}
             onArrivalTimeChange={handleArrivalTimeChange}
             savingId={savingId}
+            onTogglePayment={handleTogglePayment}
+            togglingId={togglingId}
           />
           <ArrivalGroup
             title="Domani"
             bookings={tomorrows}
             onArrivalTimeChange={handleArrivalTimeChange}
             savingId={savingId}
+            onTogglePayment={handleTogglePayment}
+            togglingId={togglingId}
           />
         </>
       )}
@@ -86,7 +105,7 @@ export default function Dashboard() {
   );
 }
 
-function ArrivalGroup({ title, bookings, onArrivalTimeChange, savingId }) {
+function ArrivalGroup({ title, bookings, onArrivalTimeChange, savingId, onTogglePayment, togglingId }) {
   return (
     <section className="arrival-group">
       <h2>{title} <span className="muted">({bookings.length})</span></h2>
@@ -98,7 +117,14 @@ function ArrivalGroup({ title, bookings, onArrivalTimeChange, savingId }) {
             <div className="arrival-card" key={b.id}>
               <div className="arrival-card-top">
                 <strong>{b.guest_name || 'Ospite'}</strong>
-                <PlatformBadge platform={b.platform} />
+                <div className="arrival-card-badges">
+                  <PlatformBadge platform={b.platform} />
+                  <PaymentBadge
+                    status={b.payment_status}
+                    busy={togglingId === b.id}
+                    onToggle={() => onTogglePayment(b)}
+                  />
+                </div>
               </div>
               <p className="muted">{b.property_name}</p>
               <p className="muted">{formatDateLong(b.check_in)} → {formatDateLong(b.check_out)}</p>

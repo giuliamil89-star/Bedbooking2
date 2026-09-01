@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useProperties } from '../context/PropertiesContext';
 import PlatformBadge from '../components/PlatformBadge';
+import PaymentBadge from '../components/PaymentBadge';
 import BookingFormModal from '../components/BookingFormModal';
 import { formatDateShort } from '../utils';
 
@@ -13,6 +14,7 @@ export default function Bookings() {
   const [filters, setFilters] = useState({ property_id: '', platform: '' });
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [togglingId, setTogglingId] = useState(null);
 
   async function load() {
     setLoading(true);
@@ -50,6 +52,19 @@ export default function Bookings() {
       await load();
     } catch (err) {
       setError(err.message);
+    }
+  }
+
+  async function handleTogglePayment(booking) {
+    setTogglingId(booking.id);
+    try {
+      const next = booking.payment_status === 'paid' ? 'unpaid' : 'paid';
+      await api.updateBooking(booking.id, { payment_status: next });
+      setBookings((list) => list.map((b) => (b.id === booking.id ? { ...b, payment_status: next } : b)));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setTogglingId(null);
     }
   }
 
@@ -95,6 +110,7 @@ export default function Bookings() {
                 <th>Check-in</th>
                 <th>Check-out</th>
                 <th>Arrivo</th>
+                <th>Pagamento</th>
                 <th></th>
               </tr>
             </thead>
@@ -107,6 +123,13 @@ export default function Bookings() {
                   <td>{formatDateShort(b.check_in)}</td>
                   <td>{formatDateShort(b.check_out)}</td>
                   <td>{b.arrival_time || '—'}</td>
+                  <td>
+                    <PaymentBadge
+                      status={b.payment_status}
+                      busy={togglingId === b.id}
+                      onToggle={() => handleTogglePayment(b)}
+                    />
+                  </td>
                   <td className="table-actions">
                     <button className="btn-link" onClick={() => { setEditing(b); setShowForm(true); }}>Modifica</button>
                     <button className="btn-link btn-link-danger" onClick={() => handleDelete(b)}>Elimina</button>

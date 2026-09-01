@@ -11,6 +11,7 @@ const emptyForm = {
   departure_time: '',
   notes: '',
   status: 'confirmed',
+  payment_status: 'unpaid',
 };
 
 export default function BookingFormModal({ booking, defaultPropertyId, onSave, onClose }) {
@@ -28,6 +29,7 @@ export default function BookingFormModal({ booking, defaultPropertyId, onSave, o
           departure_time: booking.departure_time || '',
           notes: booking.notes || '',
           status: booking.status,
+          payment_status: booking.payment_status || 'unpaid',
         }
       : { ...emptyForm, property_id: defaultPropertyId || properties[0]?.id || '' }
   );
@@ -118,6 +120,14 @@ export default function BookingFormModal({ booking, defaultPropertyId, onSave, o
               rows={3}
               placeholder="Es. arriva in auto, richiede culla…"
             />
+          </label>
+
+          <label>
+            Pagamento
+            <select value={form.payment_status} onChange={(e) => update('payment_status', e.target.value)}>
+              <option value="unpaid">Non pagato</option>
+              <option value="paid">Pagato</option>
+            </select>
           </label>
 
           {isEdit && (

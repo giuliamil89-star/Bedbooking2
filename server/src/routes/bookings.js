@@ -12,7 +12,7 @@ function serializeBooking(b) {
 }
 
 router.get('/', (req, res) => {
-  const { property_id, platform, status, from, to } = req.query;
+  const { property_id, platform, status, payment_status, from, to } = req.query;
   const clauses = [];
   const params = {};
 
@@ -23,6 +23,10 @@ router.get('/', (req, res) => {
   if (platform) {
     clauses.push('b.platform = @platform');
     params.platform = platform;
+  }
+  if (payment_status) {
+    clauses.push('b.payment_status = @payment_status');
+    params.payment_status = payment_status;
   }
   if (status) {
     clauses.push('b.status = @status');
@@ -66,7 +70,7 @@ router.get('/arrivals', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { property_id, platform, guest_name, check_in, check_out, arrival_time, departure_time, notes } = req.body;
+  const { property_id, platform, guest_name, check_in, check_out, arrival_time, departure_time, notes, payment_status } = req.body;
 
   if (!property_id) return res.status(400).json({ error: 'Struttura obbligatoria' });
   const property = db.prepare('SELECT id FROM properties WHERE id = ?').get(property_id);
@@ -79,12 +83,13 @@ router.post('/', (req, res) => {
   if (departure_time && !TIME_RE.test(departure_time)) return res.status(400).json({ error: 'Orario di partenza non valido' });
 
   const validPlatform = ['airbnb', 'booking', 'other', 'manual'].includes(platform) ? platform : 'manual';
+  const validPaymentStatus = ['paid', 'unpaid'].includes(payment_status) ? payment_status : 'unpaid';
 
   const id = crypto.randomUUID();
   db.prepare(
-    `INSERT INTO bookings (id, property_id, ical_feed_id, uid, platform, source, guest_name, check_in, check_out, arrival_time, departure_time, notes)
-     VALUES (?, ?, NULL, NULL, ?, 'manual', ?, ?, ?, ?, ?, ?)`
-  ).run(id, property_id, validPlatform, guest_name || null, check_in, check_out, arrival_time || null, departure_time || null, notes || null);
+    `INSERT INTO bookings (id, property_id, ical_feed_id, uid, platform, source, guest_name, check_in, check_out, arrival_time, departure_time, notes, payment_status)
+     VALUES (?, ?, NULL, NULL, ?, 'manual', ?, ?, ?, ?, ?, ?, ?)`
+  ).run(id, property_id, validPlatform, guest_name || null, check_in, check_out, arrival_time || null, departure_time || null, notes || null, validPaymentStatus);
 
   res.status(201).json(db.prepare('SELECT * FROM bookings WHERE id = ?').get(id));
 });
@@ -93,7 +98,7 @@ router.put('/:id', (req, res) => {
   const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
   if (!booking) return res.status(404).json({ error: 'Prenotazione non trovata' });
 
-  const { guest_name, check_in, check_out, arrival_time, departure_time, notes, status } = req.body;
+  const { guest_name, check_in, check_out, arrival_time, departure_time, notes, status, payment_status } = req.body;
 
   const next = {
     guest_name: guest_name !== undefined ? guest_name : booking.guest_name,
@@ -103,6 +108,7 @@ router.put('/:id', (req, res) => {
     departure_time: departure_time !== undefined ? departure_time : booking.departure_time,
     notes: notes !== undefined ? notes : booking.notes,
     status: status !== undefined ? status : booking.status,
+    payment_status: payment_status !== undefined ? payment_status : booking.payment_status,
   };
 
   if (!DATE_RE.test(next.check_in)) return res.status(400).json({ error: 'Data check-in non valida' });
@@ -111,9 +117,10 @@ router.put('/:id', (req, res) => {
   if (next.arrival_time && !TIME_RE.test(next.arrival_time)) return res.status(400).json({ error: 'Orario di arrivo non valido' });
   if (next.departure_time && !TIME_RE.test(next.departure_time)) return res.status(400).json({ error: 'Orario di partenza non valido' });
   if (!['confirmed', 'cancelled'].includes(next.status)) return res.status(400).json({ error: 'Stato non valido' });
+  if (!['paid', 'unpaid'].includes(next.payment_status)) return res.status(400).json({ error: 'Stato di pagamento non valido' });
 
   db.prepare(
-    `UPDATE bookings SET guest_name = ?, check_in = ?, check_out = ?, arrival_time = ?, departure_time = ?, notes = ?, status = ?, updated_at = datetime('now')
+    `UPDATE bookings SET guest_name = ?, check_in = ?, check_out = ?, arrival_time = ?, departure_time = ?, notes = ?, status = ?, payment_status = ?, updated_at = datetime('now')
      WHERE id = ?`
   ).run(
     next.guest_name || null,
@@ -123,6 +130,7 @@ router.put('/:id', (req, res) => {
     next.departure_time || null,
     next.notes || null,
     next.status,
+    next.payment_status,
     booking.id
   );
 
