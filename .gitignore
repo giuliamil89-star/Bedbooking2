@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build output
+client/dist/
+
+# Environment
+.env
+.env.local
+
+# Database (contains real booking data, never commit it)
+server/data/*.db
+server/data/*.db-shm
+server/data/*.db-wal
+
+# Editor / OS
+.DS_Store
+*.log

@@ -1,0 +1,19 @@
+{
+  "name": "bedbooking2-server",
+  "version": "1.0.0",
+  "description": "Backend API per BedBooking2 - gestione prenotazioni Airbnb/Booking.com",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "node-cron": "^4.2.1",
+    "node-ical": "^0.20.1"
+  }
+}
