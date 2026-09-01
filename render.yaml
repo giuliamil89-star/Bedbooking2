@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: checkora
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: 4000
+    disk:
+      name: checkora-data
+      mountPath: /app/server/data
+      sizeGB: 1
