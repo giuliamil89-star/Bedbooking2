@@ -81,6 +81,53 @@ frontend già compilato sulla stessa porta (quella configurata in
 `server/.env`, di default `4000`) — non serve un server separato per il
 frontend in produzione.
 
+## Pubblicarla online e installarla su Android
+
+L'app è una **PWA (Progressive Web App)**: una volta pubblicata online con
+HTTPS, si installa su Android direttamente da Chrome, con icona propria e
+senza passare dal Play Store.
+
+### 1. Pubblica il backend online
+
+Il modo più semplice è [Render](https://render.com) (dashboard web, nessun
+comando da terminale):
+
+1. Crea un account su Render e collega il tuo repository GitHub.
+2. **New +** → **Blueprint**, seleziona questo repository: Render legge
+   automaticamente `render.yaml` e propone un servizio Docker già
+   configurato (build da `Dockerfile`, porta 4000, disco persistente da 1GB
+   per il database in `/app/server/data`).
+3. Conferma la creazione. Il piano **Starter** (~7$/mese) è necessario
+   perché include il disco persistente: senza di esso le prenotazioni
+   andrebbero perse ad ogni riavvio del servizio — sconsigliato per dati
+   reali come le prenotazioni degli ospiti.
+4. Al termine del deploy, Render fornisce un URL pubblico HTTPS del tipo
+   `https://bedbooking2.onrender.com` — è il link della tua app, apribile
+   da qualsiasi dispositivo.
+
+Alternative equivalenti (stesso `Dockerfile`, adattando il deploy alla
+piattaforma): [Railway](https://railway.app), [Fly.io](https://fly.io).
+
+### 2. Installa l'app sul telefono Android
+
+1. Apri l'URL pubblico (es. `https://bedbooking2.onrender.com`) con
+   **Chrome** su Android.
+2. Chrome mostra in automatico il banner **"Installa app"** (o **"Aggiungi
+   a schermata Home"** nel menu ⋮ in alto a destra se non compare da solo).
+3. Conferma: l'icona di BedBooking2 compare sulla schermata Home e si apre
+   a schermo intero, come un'app nativa — senza barra degli indirizzi.
+
+Da quel momento l'app sul telefono parla con lo stesso backend online: le
+prenotazioni inserite o sincronizzate da un dispositivo sono visibili
+subito anche dagli altri.
+
+> Vuoi invece distribuirla tramite Play Store (icona ufficiale, ricerca
+> nello store)? È possibile impacchettando questa stessa PWA come *Trusted
+> Web Activity* con [Bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap)
+> o [PWABuilder](https://www.pwabuilder.com/): richiede un account
+> sviluppatore Google Play (25$ una tantum) e la revisione di Google. Fammi
+> sapere se vuoi che prepari anche questa parte.
+
 ## Configurazione
 
 Copia `server/.env.example` in `server/.env` per personalizzare porta e
@@ -93,3 +140,7 @@ percorso del database, se necessario.
 - Booking.com in molti casi non include il nome dell'ospite nel calendario
   iCal per motivi di privacy: in quel caso la prenotazione viene importata
   con un nome generico, modificabile a mano.
+- L'installazione come PWA richiede HTTPS (soddisfatto automaticamente da
+  Render/Railway/Fly.io) e funziona solo online: la schermata dell'app si
+  carica anche con connessione debole, ma prenotazioni e sincronizzazione
+  richiedono comunque una connessione al backend.
