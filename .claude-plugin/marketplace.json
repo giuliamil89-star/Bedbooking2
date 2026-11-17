@@ -8,5 +8,12 @@
     "description": "Claude Code plugin marketplace for Bedbooking2",
     "version": "0.1.0"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "bedbooking",
+      "source": "./plugins/bedbooking",
+      "description": "Plugin di esempio per Bedbooking2",
+      "version": "0.1.0"
+    }
+  ]
 }

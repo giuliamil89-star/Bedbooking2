@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "bedbooking2": {
+      "source": {
+        "source": "github",
+        "repo": "giuliamil89-star/Bedbooking2"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "bedbooking@bedbooking2": true
+  }
+}
