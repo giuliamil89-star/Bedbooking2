@@ -5,9 +5,16 @@
         "source": "github",
         "repo": "giuliamil89-star/Bedbooking2"
       }
+    },
+    "marketingskills": {
+      "source": {
+        "source": "github",
+        "repo": "coreyhaines31/marketingskills"
+      }
     }
   },
   "enabledPlugins": {
-    "bedbooking@bedbooking2": true
+    "bedbooking@bedbooking2": true,
+    "marketing-skills@marketingskills": true
   }
 }
