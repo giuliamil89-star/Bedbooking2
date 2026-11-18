@@ -17,11 +17,18 @@
         "source": "github",
         "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
       }
+    },
+    "context-engineering-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "muratcankoylan/Agent-Skills-for-Context-Engineering"
+      }
     }
   },
   "enabledPlugins": {
     "bedbooking@bedbooking2": true,
     "marketing-skills@marketingskills": true,
-    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
+    "context-engineering@context-engineering-marketplace": true
   }
 }
