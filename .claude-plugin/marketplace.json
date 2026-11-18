@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "bedbooking2",
+  "owner": {
+    "name": "giuliamil89-star"
+  },
+  "metadata": {
+    "description": "Claude Code plugin marketplace for Bedbooking2",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "bedbooking",
+      "source": "./plugins/bedbooking",
+      "description": "Plugin di esempio per Bedbooking2",
+      "version": "0.1.0"
+    }
+  ]
+}
